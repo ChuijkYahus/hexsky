@@ -2,6 +2,7 @@ package net.walksanator.hexxyskies.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import net.walksanator.hexxyskies.HexSkyCommon;
@@ -11,8 +12,9 @@ public final class ExampleModForge {
     public ExampleModForge() {
         // Submit our event bus to let Architectury API register our content on the right time.
         EventBuses.registerModEventBus(HexSkyCommon.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+    }
 
-        // Run our common setup.
-        HexSkyCommon.init();
+    private static void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(HexSkyCommon::init);
     }
 }

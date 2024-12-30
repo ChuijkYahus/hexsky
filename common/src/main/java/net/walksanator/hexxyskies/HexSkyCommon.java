@@ -9,6 +9,9 @@ import at.petrak.hexcasting.api.casting.eval.CastingEnvironment;
 import at.petrak.hexcasting.interop.HexInterop;
 import dev.architectury.platform.Platform;
 import net.walksanator.hexxyskies.casting.AmbitViaRemap;
+import net.walksanator.hexxyskies.ship.ShipDataHolder;
+import org.valkyrienskies.mod.api.ValkyrienSkies;
+import org.valkyrienskies.mod.api.VsApi;
 import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.logging.Logger;
@@ -29,6 +32,8 @@ public final class HexSkyCommon {
 
         if (Platform.isModLoaded("complexhex") || Platform.isModLoaded("moreiotas") || Platform.isModLoaded("hexal"))
             PatchouliAPI.get().setConfigFlag(HexInterop.PATCHOULI_ANY_INTEROP_FLAG, true);
+
+        ValkyrienSkies.getApi().registerAttachment(ShipDataHolder.class);
     }
     public static void killMe() {
         //IotaRegistry.INSTANCE.register(); //moved to a mixin

@@ -8,12 +8,15 @@ import at.petrak.hexcasting.api.casting.getVec3
 import at.petrak.hexcasting.api.casting.iota.Iota
 import at.petrak.hexcasting.api.casting.iota.NullIota
 import at.petrak.hexcasting.api.misc.MediaConstants
+import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 import net.walksanator.hexxyskies.casting.iotas.ShipIota
 import net.walksanator.hexxyskies.ship.getShipDataHolder
+import org.valkyrienskies.core.api.ships.LoadedServerShip
+import org.valkyrienskies.mod.api.getShipManagingBlock
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
 import org.valkyrienskies.mod.common.util.toJOML
 
@@ -44,7 +47,7 @@ object OpShipRaycast: ConstMediaAction {
 
     private fun getShipIotaOrNull(env: CastingEnvironment, pos: Vec3): Iota {
         if (!env.isVecInRange(pos)) return NullIota()
-        val ship = env.world.getShipObjectManagingPos(pos.toJOML()) ?: return NullIota()
+        val ship = env.world.getShipManagingBlock(BlockPos.containing(pos)) as? LoadedServerShip ?: return NullIota()
         if (ship.getShipDataHolder().cloaked) return NullIota()
         return ShipIota(ship.id, ship.slug)
     }

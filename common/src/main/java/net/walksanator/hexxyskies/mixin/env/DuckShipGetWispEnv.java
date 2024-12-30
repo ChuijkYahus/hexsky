@@ -1,7 +1,6 @@
 package net.walksanator.hexxyskies.mixin.env;
 
-import at.petrak.hexcasting.api.casting.eval.env.PlayerBasedCastEnv;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.walksanator.hexxyskies.duck.ShipGetterEnvironment;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -9,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import org.valkyrienskies.mod.api.ValkyrienSkies;
 import ram.talia.hexal.api.casting.eval.env.WispCastEnv;
 import ram.talia.hexal.common.entities.BaseCastingWisp;
 
@@ -22,6 +21,6 @@ public class DuckShipGetWispEnv implements ShipGetterEnvironment {
 
     @Override
     public @Nullable ServerShip hexsky$getShip() {
-        return (ServerShip)VSGameUtilsKt.getShipManagingPos(wisp.level(), wisp.position());
+        return (ServerShip) ValkyrienSkies.getShipManagingBlock(wisp.level(), BlockPos.containing(wisp.position()));
     }
 }

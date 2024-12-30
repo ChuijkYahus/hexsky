@@ -14,10 +14,15 @@ import net.minecraft.world.phys.Vec3
 import net.walksanator.hexxyskies.casting.VariableMediaAction
 import net.walksanator.hexxyskies.casting.iotas.ShipIota
 import org.joml.Vector3d
+import org.joml.Vector3ic
+import org.valkyrienskies.core.api.bodies.properties.BodyTransform
+import org.valkyrienskies.core.impl.bodies.properties.BodyTransformImpl
 import org.valkyrienskies.core.impl.game.ships.ShipDataCommon
 import org.valkyrienskies.core.impl.game.ships.ShipTransformImpl
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
+import org.valkyrienskies.mod.api.getShipManagingBlock
 import org.valkyrienskies.mod.common.*
+import org.valkyrienskies.mod.common.assembly.ShipAssembler.assembleToShip
 import org.valkyrienskies.mod.common.assembly.createNewShipWithBlocks
 import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
@@ -31,7 +36,7 @@ object OpAssemble : VariableMediaAction {
     override fun render(args: List<Iota>, env: CastingEnvironment): VariableMediaAction.Result {
         val blocks = args.getList(0, argc)
         val split = blocks.filterIsInstance<Vec3Iota>().filter { env.isVecInAmbit(it.vec3) }.map { it.vec3.blockPos }
-            .partition { env.world.getShipManagingPos(it) == null }
+            .partition { env.world.getShipManagingBlock(it) == null }
         val filter = if (split.first.size >= split.second.size) {
             split.first
         } else {
@@ -55,11 +60,11 @@ object OpAssemble : VariableMediaAction {
                 acc.add(it.center)
             }.div(blocks.size.toDouble()).blockPos
 
-            val serverShip = createNewShipWithBlocks(center, dense, env.world)
+            val serverShip = assembleToShip(env.world, dense.toList().map(Vector3ic::toBlockPos), false)
             val blockPos = center
             val scale = 1.0
             val minScaling = 0.25
-            val parentShip = env.world.getShipManagingPos(blocks.first())
+            val parentShip = env.world.getShipManagingBlock(blocks.first())
             if (parentShip != null) {
                 // Compute the ship transform
                 val newShipPosInWorld =
@@ -72,8 +77,8 @@ object OpAssemble : VariableMediaAction {
                     newShipScaling = Vector3d(minScaling, minScaling, minScaling)
                 }
                 val shipTransform =
-                    ShipTransformImpl(newShipPosInWorld, newShipPosInShipyard, newShipRotation, newShipScaling)
-                (serverShip as ShipDataCommon).transform = shipTransform
+                    BodyTransformImpl(newShipPosInWorld, newShipRotation, newShipScaling, newShipPosInShipyard)
+                (serverShip as ShipDataCommon).setFromTransform(shipTransform)
             }
 
             return listOf(ShipIota(serverShip.id, serverShip.slug))
@@ -83,7 +88,7 @@ object OpAssemble : VariableMediaAction {
     private class One(val blockPos: BlockPos) : VariableMediaAction.Result(MediaConstants.CRYSTAL_UNIT) {
         override fun execute(env: CastingEnvironment): List<Iota> {
             val level = env.world as ServerLevel
-            val parentShip = level.getShipManagingPos(blockPos)
+            val parentShip = level.getShipManagingBlock(blockPos)
             // Make a ship
             val dimensionId = level.dimensionId
             val scale = 1.0
@@ -105,8 +110,8 @@ object OpAssemble : VariableMediaAction {
                     newShipScaling = Vector3d(minScaling, minScaling, minScaling)
                 }
                 val shipTransform =
-                    ShipTransformImpl(newShipPosInWorld, newShipPosInShipyard, newShipRotation, newShipScaling)
-                (serverShip as ShipDataCommon).transform = shipTransform
+                    BodyTransformImpl(newShipPosInWorld, newShipRotation, newShipScaling, newShipPosInShipyard)
+                (serverShip as ShipDataCommon).setFromTransform(shipTransform)
             }
             return listOf(ShipIota(serverShip.id, serverShip.slug))
         }

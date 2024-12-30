@@ -4,6 +4,7 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import kotlin.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.walksanator.hexxyskies.duck.ShipGetterEnvironment;
 import net.walksantor.hextweaks.casting.environment.ComputerCastingEnv;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import org.valkyrienskies.mod.api.ValkyrienSkies;
 
 @Pseudo
 @Mixin(ComputerCastingEnv.class)
@@ -32,10 +33,10 @@ public abstract class DuckShipGetComputerEnv implements ShipGetterEnvironment {
     @Override
     public @Nullable ServerShip hexsky$getShip() {
         if (getTurtleData() != null) {
-            return (ServerShip) VSGameUtilsKt.getShipManagingPos(getTurtleData().getFirst().getLevel(), getTurtleData().getFirst().getPosition());
+            return (ServerShip) ValkyrienSkies.getShipManagingBlock(getTurtleData().getFirst().getLevel(), getTurtleData().getFirst().getPosition());
         } else {
             Entity entity = pocketData.getEntity();
-            return (ServerShip) VSGameUtilsKt.getShipManagingPos(entity.level(), entity.position());
+            return (ServerShip) ValkyrienSkies.getShipManagingBlock(entity.level(), BlockPos.containing(entity.position()));
         }
     }
 }

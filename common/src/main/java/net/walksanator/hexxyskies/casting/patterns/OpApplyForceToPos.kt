@@ -18,16 +18,17 @@ import org.joml.Vector3dc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.joml.primitives.AABBic
+import org.valkyrienskies.core.api.ships.LoadedServerShip
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
 
 class OpApplyForceToPos(private val mode: Boolean) : SpellAction {
     override val argc: Int = 3
     override fun execute(args: List<Iota>, env: CastingEnvironment): SpellAction.Result {
-        val ship = args.getShip(0, env.world, argc)
+        val ship = args.getShip(0, env.world, argc) as LoadedServerShip
         val force = args.getVec3(1, argc)
         val offset = args.getVec3(2, argc)
-        val point = ship.getInertialData()!!.centerOfMassInShip.toMinecraft().add(offset)
+        val point = ship.getInertialData()!!.centerOfMass.toMinecraft().add(offset)
 
         if (ship.shipAABB?.toMinecraft()?.contains(point) != true) {
             throw MishapBadLocation(offset, "out_of_ship")
@@ -37,7 +38,7 @@ class OpApplyForceToPos(private val mode: Boolean) : SpellAction {
             Spell(mode, ship.getShipDataHolder(), force.toJOML(), offset.toJOML()),
             (force.length() / ship.mass).toLong() * MediaConstants.DUST_UNIT,
             listOf(
-                ParticleSpray(ship.getInertialData()!!.centerOfMassInShip.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
+                ParticleSpray(ship.getInertialData()!!.centerOfMass.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
             ))
     }
 

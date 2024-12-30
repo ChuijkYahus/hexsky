@@ -3,6 +3,7 @@ package net.walksanator.hexxyskies.ship
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import org.joml.Vector3d
 import org.joml.Vector3dc
+import org.valkyrienskies.core.api.attachment.getAttachment
 import org.valkyrienskies.core.api.ships.*
 import org.valkyrienskies.core.util.pollUntilEmpty
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -36,10 +37,10 @@ class ShipDataHolder() : ShipForcesInducer {
     private var toBeStaticUpdated = false
 
     companion object {
-        fun getOrCreate(ship: ServerShip): ShipDataHolder =
+        fun getOrCreate(ship: LoadedServerShip): ShipDataHolder =
             ship.getAttachment<ShipDataHolder>()
                 ?: ShipDataHolder().also {
-                    ship.saveAttachment(it)
+                    ship.setAttachment(it)
                 }
     }
 
@@ -70,4 +71,4 @@ class ShipDataHolder() : ShipForcesInducer {
     private data class InvForceAtPos(val force: Vector3dc, val pos: Vector3dc)
 }
 
-fun ServerShip.getShipDataHolder(): ShipDataHolder = ShipDataHolder.getOrCreate(this)
+fun LoadedServerShip.getShipDataHolder(): ShipDataHolder = ShipDataHolder.getOrCreate(this)

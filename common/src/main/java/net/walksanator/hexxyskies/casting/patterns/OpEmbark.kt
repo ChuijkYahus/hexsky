@@ -6,7 +6,9 @@ import at.petrak.hexcasting.api.casting.iota.Iota
 import at.petrak.hexcasting.api.casting.iota.Vec3Iota
 import at.petrak.hexcasting.api.casting.mishaps.MishapBadLocation
 import at.petrak.hexcasting.api.casting.mishaps.MishapInvalidIota
+import net.minecraft.core.BlockPos
 import net.walksanator.hexxyskies.casting.iotas.ShipIota
+import org.valkyrienskies.mod.api.getShipManagingBlock
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
@@ -17,7 +19,7 @@ object OpEmbark : ConstMediaAction {
     override fun execute(args: List<Iota>, env: CastingEnvironment): List<Iota> {
         val ship = when (val iota = args[0]) {
             is ShipIota -> iota.getShip(env.world)!!
-            is Vec3Iota -> env.world.getShipManagingPos(iota.vec3.toJOML())?: throw MishapInvalidIota.ofType(iota,0,"pos_on_ship")
+            is Vec3Iota -> env.world.getShipManagingBlock(BlockPos.containing(iota.vec3))?: throw MishapInvalidIota.ofType(iota,0,"pos_on_ship")
             else -> throw MishapInvalidIota.ofType(iota,0,"pos_or_ship")
         }
         if (env is WispCastEnv) {

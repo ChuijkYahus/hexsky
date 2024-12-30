@@ -3,10 +3,12 @@ package net.walksanator.hexxyskies.casting
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironment
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironmentComponent
 import at.petrak.hexcasting.api.casting.eval.CastingEnvironmentComponent.IsVecInRange
+import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.Vec3
 import net.walksanator.hexxyskies.HexSkyCommon
 import net.walksanator.hexxyskies.duck.ShipGetterEnvironment
 import net.walksanator.hexxyskies.mixin.CastingEnvironmentAccessor
+import org.valkyrienskies.mod.api.getShipManagingBlock
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.toWorldCoordinates
 import org.valkyrienskies.mod.common.util.toJOML
@@ -24,7 +26,7 @@ class AmbitViaRemap(private val parent: CastingEnvironment) : IsVecInRange {
         if (parent is ShipGetterEnvironment) {
             val ship = parent.`hexsky$getShip`()
             if (ship == null) {
-                val ship2 = parent.world.getShipManagingPos(vec)
+                val ship2 = parent.world.getShipManagingBlock(BlockPos.containing(vec))
                 return (parent as CastingEnvironmentAccessor).invokeIsVecInRangeEnvironment(ship2?.toWorldCoordinates(vec)?: vec)
                 // ship to world remapping
             } else {
@@ -36,7 +38,7 @@ class AmbitViaRemap(private val parent: CastingEnvironment) : IsVecInRange {
         } else {
             HexSkyCommon.LOGGER.warning("Environment %s does not implement ShipGetterEnvironment. make a issue if you see this!".format(parent.javaClass.canonicalName))
             HexSkyCommon.LOGGER.info("Falling back to ship to world remapping")
-            val ship = parent.world.getShipManagingPos(vec)
+            val ship = parent.world.getShipManagingBlock(BlockPos.containing(vec))
             return (parent as CastingEnvironmentAccessor).invokeIsVecInRangeEnvironment(ship?.toWorldCoordinates(vec))
         }
     }

@@ -12,6 +12,7 @@ import net.walksanator.hexxyskies.getShip
 import net.walksanator.hexxyskies.ship.getShipDataHolder
 import org.joml.Quaterniond
 import org.joml.Quaterniondc
+import org.valkyrienskies.core.api.ships.LoadedServerShip
 import org.valkyrienskies.core.impl.game.ShipTeleportDataImpl
 import org.valkyrienskies.mod.common.shipObjectWorld
 import kotlin.math.abs
@@ -21,7 +22,7 @@ object OpShipSetRotQuat : ConstMediaAction {
     override val mediaCost: Long = 2
 
     override fun execute(args: List<Iota>, env: CastingEnvironment): List<Iota> {
-        val ship = args.getShip(0,env.world,argc)
+        val ship = args.getShip(0,env.world,argc) as LoadedServerShip
         val quat = args.getQuaternion(1, argc)
         if (ship.getShipDataHolder().cloaked || !quat.isValidRotation()) return listOf(NullIota())
         env.world.shipObjectWorld.teleportShip(ship, ShipTeleportDataImpl(newRot = quat.toJOML()))

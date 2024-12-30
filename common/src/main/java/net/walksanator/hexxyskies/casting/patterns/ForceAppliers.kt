@@ -13,25 +13,21 @@ import net.walksanator.hexxyskies.getShip
 import net.walksanator.hexxyskies.ship.ShipDataHolder
 import net.walksanator.hexxyskies.ship.getShipDataHolder
 import org.joml.Vector3dc
+import org.valkyrienskies.core.api.ships.LoadedServerShip
 import org.valkyrienskies.core.api.ships.ServerShip
-import org.valkyrienskies.core.api.ships.getAttachment
-import org.valkyrienskies.core.impl.game.ships.ShipData
-import org.valkyrienskies.mod.common.util.GameTickForceApplier
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class OpForceApply(private val invariant: Boolean) : SpellAction {
     override val argc: Int = 2
     override fun execute(args: List<Iota>, env: CastingEnvironment): SpellAction.Result {
-        val ship = args.getShip(0,env.world,argc)
+        val ship = args.getShip(0,env.world,argc) as LoadedServerShip
         val force = args.getVec3(1,argc)
         return SpellAction.Result(
             Spell(invariant, ship.getShipDataHolder(), force.toJOML()),
             (force.length() / ship.mass).toLong() * MediaConstants.DUST_UNIT,
             listOf(
-                ParticleSpray(ship.getInertialData()!!.centerOfMassInShip.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
+                ParticleSpray(ship.getInertialData()!!.centerOfMass.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
             )
         )
     }
@@ -50,13 +46,13 @@ class OpForceApply(private val invariant: Boolean) : SpellAction {
 class OpTorqueApply(private val invariant: Boolean) : SpellAction {
     override val argc: Int = 2
     override fun execute(args: List<Iota>, env: CastingEnvironment): SpellAction.Result {
-        val ship = args.getShip(0,env.world,argc)
+        val ship = args.getShip(0,env.world,argc) as LoadedServerShip
         val force = args.getVec3(1,argc)
         return SpellAction.Result(
             Spell(invariant, ship.getShipDataHolder(), force.toJOML()),
             (force.length() / ship.mass).toLong() * MediaConstants.DUST_UNIT,
             listOf(
-                ParticleSpray(ship.getInertialData()!!.centerOfMassInShip.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
+                ParticleSpray(ship.getInertialData()!!.centerOfMass.toMinecraft(), Vec3.ZERO, 0.3, 0.2, 30)
             )
         )
     }
